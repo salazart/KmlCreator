@@ -12,31 +12,28 @@ import de.micromata.opengis.kml.v_2_2_0.Placemark;
 import de.micromata.opengis.kml.v_2_2_0.Polygon;
 
 public class KmlService {
-	private String name;
 	private Document document;
 	private ICoordinate coordinateImpl;
+	private Kml kml;
 
-	public KmlService(String name, ICoordinate coordinateImpl) {
+	public KmlService(ICoordinate coordinateImpl) {
 		super();
-		this.name = name;
 		this.coordinateImpl = coordinateImpl;
+		this.kml = new Kml();
+		this.document = kml.createAndSetDocument();
+		
 	}
 	
-	public Kml createKmlMark(Coordinate coordinate){
-		final Kml kml = new Kml();
-		document = kml.createAndSetDocument();
-		
+	public void addKmlMark(Coordinate coordinate, String markName){
 		Placemark placemark = document.createAndAddPlacemark();
-		placemark.withName(name)
+		placemark.withName(markName)
 				.withOpen(Boolean.TRUE).createAndSetPoint()
 				.addToCoordinates(coordinate.getLongitude(),coordinate.getLatitude());
-		return kml;
 	}
 	
-	public Kml createKmlMarkSector(Coordinate coordinate, int timing, int azimuth){
-		Kml kml = createKmlMark(coordinate);
+	public void addKmlMarkSector(String sectorName, Coordinate coordinate, int timing, int azimuth){
 		
-		Polygon polygon = document.createAndAddPlacemark().createAndSetPolygon();
+		Polygon polygon = document.createAndAddPlacemark().withName(sectorName).createAndSetPolygon();
 		LinearRing linearRing = polygon.createAndSetOuterBoundaryIs().createAndSetLinearRing();
 		
 		linearRing.addToCoordinates(coordinate.getLongitude(),coordinate.getLatitude());
@@ -45,6 +42,9 @@ public class KmlService {
 			linearRing.addToCoordinates(c.getLongitude(), c.getLatitude());
 		}
 		linearRing.addToCoordinates(coordinate.getLongitude(),coordinate.getLatitude());
-		return kml;
+	}
+	
+	public Kml getKml(){
+		return this.kml;
 	}
 }

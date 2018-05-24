@@ -18,10 +18,12 @@ public class FileCreaterTest {
 	private static Coordinate coordinate = new Coordinate(26.996139215314, 49.4340943889666);
 	
 	private static ICoordinate coordinateImpl = new CoordinateService();
-	private static KmlService kmlService = new KmlService(MARK_NAME, coordinateImpl);
+	private static KmlService kmlService = new KmlService(coordinateImpl);
 	
 	public static void main(String[] args) {
-		Kml kml = kmlService.createKmlMarkSector(coordinate, TIMING, AZIMUTH);
+		kmlService.addKmlMark(coordinate, MARK_NAME);
+		kmlService.addKmlMarkSector(MARK_NAME, coordinate, TIMING, AZIMUTH);
+		Kml kml = kmlService.getKml();
 		
 		try {
 			kml.marshal(new File(FILE_NAME));
